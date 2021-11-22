@@ -1,4 +1,6 @@
 apply plugin: "com.android.application"
+//apply plugin: 'com.google.gms.google-services' // <- Add this line
+apply plugin: 'com.google.gms.google-services' // <- Add this line
 
 import com.android.build.OutputFile
 
@@ -118,7 +120,7 @@ def jscFlavor = 'org.webkit:android-jsc:+'
  * on project.ext.react, JavaScript will not be compiled to Hermes Bytecode
  * and the benefits of using Hermes will therefore be sharply reduced.
  */
-def enableHermes = project.ext.react.get("enableHermes", false);
+def enableHermes = project.ext.react.get("enableHermes", false)
 
 /**
  * Architectures to build native code for in debug.
@@ -136,6 +138,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true // <-- ADD THIS in the defaultConfig section
     }
     splits {
         abi {
@@ -190,6 +193,10 @@ android {
 
 dependencies {
 
+    implementation 'androidx.multidex:multidex:2.0.1'  // <-- ADD THIS DEPENDENCY enable multidex
+
+    implementation platform('com.google.firebase:firebase-bom:29.0.0')
+
     implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha02'
 
@@ -213,7 +220,7 @@ dependencies {
     }
 
     if (enableHermes) {
-        def hermesPath = "../../node_modules/hermes-engine/android/";
+        def hermesPath = "../../node_modules/hermes-engine/android/"
         debugImplementation files(hermesPath + "hermes-debug.aar")
         releaseImplementation files(hermesPath + "hermes-release.aar")
     } else {
