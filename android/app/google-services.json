@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "277156448895",
+    "firebase_url": "https://restaurantenative-default-rtdb.firebaseio.com",
+    "project_id": "restaurantenative",
+    "storage_bucket": "restaurantenative.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:277156448895:android:5cae02d6c145d18eca8d4a",
+        "android_client_info": {
+          "package_name": "com.restauranteapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "277156448895-rpiqijj8bepf2aeo0iph41rcmodln80o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGFrcXTge36jlZin_1IO7cnxiZISPrKz4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "277156448895-rpiqijj8bepf2aeo0iph41rcmodln80o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
