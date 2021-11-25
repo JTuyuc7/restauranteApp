@@ -1,19 +1,22 @@
 import React, { useContext, useEffect } from 'react'
-import { SafeAreaView, Text, View, StyleSheet, FlatList, Dimensions, TouchableOpacity } from 'react-native';
+import { SafeAreaView, Text, View, StyleSheet, FlatList, Dimensions, TouchableOpacity, Alert } from 'react-native';
 import { Image, Button, NativeBaseProvider } from 'native-base';
 import { useNavigation } from '@react-navigation/native';
-
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import PedidoContext from '../../context/pedidos/pedidosContext';
+import firebase from '../../firebase';
 
 const { height, width} = Dimensions.get('screen');
 
 const ResumenPedido = () => {
 
+    //console.log(firebase, 'Opciones')
+
     // Navigacion si se quiere agregar mas platillos
     const navigation = useNavigation();
 
     //Extraer el menu seleccionado
-    const { pedido, totalPagar, calcularTotalPedido } = useContext(PedidoContext);
+    const { pedido, totalPagar, calcularTotalPedido, eliminarPlatilloState, agregarId } = useContext(PedidoContext);
 
     
     useEffect(() => {
@@ -29,9 +32,55 @@ const ResumenPedido = () => {
         calcularTotalPedido(nuevoTotal)
     }
 
+    const progresoPedido = () => {
+        Alert.alert(
+            'Confirmar',
+            'Deseas confirmar tu pedido',
+            [
+                { text: 'Confirmar', onPress: async () => {
+                    // escribir el pedido en firebase 
+                    const pedidoObj = {
+                        tiempoEntrega: 0,
+                        completado: false,
+                        total: Number(totalPagar),
+                        orden: pedido,
+                        creado: Date.now()
+                    }
+
+                    //Mandar la data a firebase
+                    //console.log(pedidoObj)
+                    try {
+                        const crearOrden = await firebase.db.collection('ordenes').add( pedidoObj )
+                        console.log(crearOrden.id, 'Orden agregada')
+                        agregarId(crearOrden.id)
+                    } catch (error) {
+                        console.log(error, 'Unable to save data')
+                    }
+
+                    navigation.navigate('progreso')
+                }},
+                { text: 'Revisar', style: 'cancel'}
+            ]
+        )
+    }
+
+    const eliminarProducto = (id) => {
+        // Alerta para eliminar el platillo
+        Alert.alert(
+            'Alerta',
+            'Deseas eliminar el platillo?',
+            [
+                {text: 'Cancelar', style: 'cancel'},
+                { text: 'Si, eliminar', onPress: () => {
+                    eliminarPlatilloState(id)
+                }}
+            ]
+        )
+    }
+
     // Render Items
     const Item = ({data}) => {
-        const { imagen, precio, cantidad, nombre, } = data;
+        const { imagen, precio, cantidad, nombre, id } = data;
 
         return (
             <>
@@ -46,6 +95,18 @@ const ResumenPedido = () => {
                     <View style={ styles.dataContainer }>
                         <Text style={ styles.textoDetalles}>{cantidad} {nombre}</Text>
                         <Text style={ styles.textoDetalles}>Por {precio.toFixed(2)} la unidad </Text>
+                    </View>
+
+                    <View style={{ marginLeft: 10}}>
+                        <TouchableOpacity
+                            onPress={ () => eliminarProducto(id) }
+                        >
+                            <Icon
+                                size={35}
+                                color="black"
+                                name="cancel"
+                            />
+                        </TouchableOpacity>
                     </View>
                 </View>
             </>
@@ -100,7 +161,7 @@ const ResumenPedido = () => {
                 >
                     <TouchableOpacity
                         style={ styles.buttonConfirm}
-                        onPress={ () => navigation.navigate('progreso')}
+                        onPress={ () => progresoPedido() }
                     >
                         <Text style={styles.textButton}>Ordenar Pedido</Text>
                     </TouchableOpacity>
@@ -135,7 +196,9 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     dataContainer: {
-        paddingLeft: 10
+        paddingLeft: 10,
+        //backgroundColor: 'green',
+        width: width * 0.55
     },
     textoDetalles: {
         fontSize: 18,

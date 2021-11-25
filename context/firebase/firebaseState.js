@@ -23,9 +23,6 @@ const FirebaseState = props => {
 
     //Methods that will execute to bring the data
     const obtenerPlatillos = () => {
-        // Get the info by making the query to the DD
-        //let platillos = await firebase.db.collection('productos').where('existencia', '==', true).get()
-        //firebase.db.settings({ experimentalForceLongPolling: true });
         firebase.db.collection('productos').where('existencia', '==', true).onSnapshot(manejarSnapshot);
 
         function manejarSnapshot (snapshot) {
