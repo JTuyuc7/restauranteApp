@@ -3,14 +3,15 @@ import PedidoContext from './pedidosContext';
 import PedidoReducer from './pedidosReducer';
 
 // Importar Types para los pedidos
-import { SELECCIONAR_PRODUCTO, CONFIRMAR_AGREGAR_PLATILLO, CALCULAR_TOTAL } from '../../types';
+import { SELECCIONAR_PRODUCTO, CONFIRMAR_AGREGAR_PLATILLO, CALCULAR_TOTAL, ELIMINAR_PLATILLO, GUARDAR_ID_ORDEN, RESETEAR_ESTADO } from '../../types';
 
 const PedidoState = ( props ) => {
 
     const initialState = {
         pedido: [],
         platillo: null,
-        totalPagar: 0
+        totalPagar: 0,
+        idOrden: null,
     }
 
     const [ state, dispatch ] = useReducer( PedidoReducer, initialState );
@@ -37,6 +38,27 @@ const PedidoState = ( props ) => {
         })
     }
 
+    const eliminarPlatilloState = (id) => {
+        dispatch({
+            type: ELIMINAR_PLATILLO,
+            payload: id
+        })
+    }
+
+    // Agregar el Id al context
+    const agregarId = (id) => {
+        dispatch({
+            type: GUARDAR_ID_ORDEN,
+            payload: id
+        })
+    }
+
+    const resetarEstado = () => {
+        dispatch({
+            type: RESETEAR_ESTADO
+        })
+    }
+
     return (  
         <PedidoContext.Provider
             value={{
@@ -45,12 +67,18 @@ const PedidoState = ( props ) => {
                 platillo: state.platillo,
 
                 totalPagar: state.totalPagar,
+                idOrden: state.idOrden,
+
                 // Pass the method to add the product to the state
                 agregarPedido,
 
                 platillosSeleccionados,
 
                 calcularTotalPedido,
+
+                eliminarPlatilloState,
+                agregarId,
+                resetarEstado,
             }}
         >
             { props.children }
